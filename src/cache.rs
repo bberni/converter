@@ -1,5 +1,5 @@
 use std::{fs::File, path::Path};
-use rusqlite::Connection;
+use rusqlite::{params, Connection, OptionalExtension};
 use anyhow::Result;
 
 use crate::models::{ApiResponse, CacheData};
@@ -7,7 +7,7 @@ use crate::models::{ApiResponse, CacheData};
 pub fn cleanup(conn: &Connection) -> Result<usize> {
     let rows_deleted = conn.execute("
         DELETE FROM cache
-        WHERE expiry < strftime('%s','now');, params)
+        WHERE expiry < strftime('%s','now')
     ",
     ()
     )?;
@@ -31,8 +31,24 @@ pub fn init() -> Result<Connection> {
     return Ok(conn)
 }
 
-pub fn get(code: &str, conn: &Connection) -> Result<ApiResponse> {
+pub fn get(code: &str, conn: &Connection) -> Result<Option<ApiResponse>> {
     let mut stmt = conn.prepare("SELECT data FROM cache WHERE code = ?1")?;
-    let data: CacheData = stmt.query_row(&[code], |r| r.get(0))?;
-    return Ok(data.cached_response);
+    let data: Option<CacheData> = stmt.query_row(&[code], |r| r.get(0)).optional()?;
+    if let Some(data) = data {
+        return Ok(Some(data.cached_response))
+    } else {
+        return Ok(None)
+    }
+}
+
+pub fn add(response: &ApiResponse, conn: &Connection) -> Result<()>{
+    let code = &response.base_code;
+    let expiry = &response.time_next_update_unix;
+    let data = serde_json::to_string(response)?;
+    conn.execute("
+        INSERT INTO cache (code, expiry, data) 
+        VALUES (?1, ?2, ?3);
+    ", 
+    params![code, expiry, data])?;
+    Ok(())
 }
