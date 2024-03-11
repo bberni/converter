@@ -10,8 +10,8 @@ pub struct ApiResponse {
     time_last_update_utc: String,
     time_next_update_unix: u64,
     time_next_update_utc: String,
-    base_code: String,
-    conversion_rates: HashMap<String, f64>,
+    pub base_code: String,
+    pub conversion_rates: HashMap<String, f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -44,6 +44,11 @@ fn get_exchange_data(user_currency: &str) -> Result<ApiResponse> {
 }
 
 fn convert_currency(target_currency: &str, api_data: &ApiResponse) -> Result<f64> {
+    let coversion_rate = if let Some(rate) = api_data.conversion_rates.get(target_currency) {
+        rate
+    } else {
+        return Err(())
+    }
     todo!()
 }
 fn main() {

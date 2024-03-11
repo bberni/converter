@@ -22,3 +22,7 @@ pub enum ApiError {
     #[error(r#"[-] Unknown API error: {0}"#)]
     UnknownError(String)
 }
+
+pub enum ConversionError {
+    #[error(r#""#)]
+}
