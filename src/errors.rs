@@ -7,6 +7,7 @@ pub enum RequestError {
     {0}"#)]
     RequestError(Error)
 }
+
 #[derive(Error, Debug)]
 pub enum ApiError {
     #[error(r#"[-] Unsupported currency code: {0}"#)]
@@ -23,6 +24,8 @@ pub enum ApiError {
     UnknownError(String)
 }
 
+#[derive(Error, Debug)]
 pub enum ConversionError {
-    #[error(r#""#)]
+    #[error(r#"Cannot find conversion data for {0} -> {1}"#)]
+    CurrencyNotFound(String, String)
 }

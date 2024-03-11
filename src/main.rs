@@ -1,7 +1,8 @@
 mod models;
 mod errors;
+mod cache;
 use reqwest::{self, blocking::Response, StatusCode};
-use errors::{RequestError, ApiError};
+use errors::{RequestError, ApiError, ConversionError};
 use anyhow::Result;
 use std::process::exit;
 use models::{ApiResponse, ApiResponseError};
@@ -43,13 +44,14 @@ fn get_exchange_data(user_currency: &str) -> Result<ApiResponse> {
     return parse_response(user_currency, response)
 }
 
-fn convert_currency(target_currency: &str, api_data: &ApiResponse) -> Result<f64> {
-    let coversion_rate = if let Some(rate) = api_data.conversion_rates.get(target_currency) {
+fn convert_currency(amount: f64, target_currency: String, api_data: ApiResponse) -> Result<f64> {
+    let conversion_rate = if let Some(rate) = api_data.conversion_rates.get(&target_currency) {
         rate
     } else {
-        return Err(())
-    }
-    todo!()
+        return Err(ConversionError::CurrencyNotFound(api_data.base_code, target_currency).into())
+    };
+    
+    return Ok(((amount * conversion_rate) * 100 as f64).floor() / 100 as f64)
 }
 fn main() {
     let user_currency = "PLN";
@@ -59,5 +61,10 @@ fn main() {
         println!("{}", e);
         exit(1);
     });
-   println!("{:?}", api_data)
+    let final_amount = convert_currency(amount, target_currency.to_string(), api_data)
+        .unwrap_or_else(|e| {
+            println!("{}", e);
+            exit(1);
+        });
+    println!("{:.2} {} -> {:.2} {}", amount, user_currency, final_amount, target_currency);
 }
