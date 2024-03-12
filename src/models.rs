@@ -20,7 +20,9 @@ pub struct ApiResponse {
 pub struct ApiResponseError {
     result: String,
     documentation: String,
+    #[serde(rename = "terms-of-use")]
     terms_of_use: String,
+    #[serde(rename = "error-type")]
     pub error_type: String
 }
 
@@ -42,4 +44,10 @@ impl FromSql for CacheData {
             _ => Err(FromSqlError::InvalidType),
         }
     }
+}
+
+pub struct Config {
+    pub from_currency: String,
+    pub to_currency: String,
+    pub amount: f64
 }

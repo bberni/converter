@@ -1,11 +1,13 @@
 mod models;
 mod errors;
 mod cache;
+
 use reqwest::{self, blocking::Response, StatusCode};
 use errors::{RequestError, ApiError, ConversionError};
 use anyhow::Result;
 use rusqlite::Connection;
 use models::{ApiResponse, ApiResponseError};
+use clap::{command, Arg, ArgAction, ArgMatches};
 
 const API_KEY: &str = "cf1879d2cbcc3030df333526";
 
@@ -29,7 +31,9 @@ fn parse_response(user_currency: &str, r: Response, conn: &Connection) -> Result
             return Ok(data)
         },
         _ => {
-            let data: ApiResponseError = serde_json::from_str(&r.text()?)?;
+            let text = &r.text()?;
+            println!("{:?}", text);
+            let data: ApiResponseError = serde_json::from_str(text)?;
             let error = match data.error_type.as_str() {
                 "unsupported-code" => ApiError::UnsupportedCode(user_currency.to_owned()),
                 "malformed-request" => ApiError::MalformedRequest(),
@@ -75,9 +79,39 @@ fn convert_currency(amount: f64, target_currency: String, api_data: ApiResponse)
     
     return Ok(((amount * conversion_rate) * 100 as f64).floor() / 100 as f64)
 }
-fn main() -> Result<()>{
+
+fn parse_args() -> ArgMatches {
+    command!()
+    .arg(
+        Arg::new("interactive").short('i').long("interactive")
+        .action(ArgAction::SetTrue)
+        .exclusive(true)
+    )
+    .arg(Arg::new("list").short('l').long("list").num_args(1).value_name("currency code")
+        .exclusive(true)
+    )
+    .arg(
+        Arg::new("from-currency")
+        .required_unless_present_any(["interactive", "list"])
+    )
+    .arg(
+        Arg::new("to-currency")
+        .required_unless_present_any(["interactive", "list"])
+    )
+    .arg(
+        Arg::new("amount")
+        .required_unless_present_any(["interactive", "list"])
+    ).get_matches()
+}
+fn main() -> Result<()> {
+    let match_result = parse_args();
+
+    let is_interactive = match_result.get_flag("interactive");
+
+
+
     let conn = cache::init()?;
-    let user_currency = "USD";
+    let user_currency = "PLN";
     let target_currency = "GBP";
     let amount: f64 = 10.00;
     let api_data = get_exchange_data(user_currency, &conn)?;
