@@ -1,11 +1,7 @@
-mod models;
-mod errors;
-mod cache;
-
 use anyhow::Result;
 use clap::{command, Arg, ArgAction, ArgMatches};
-use crate::{}
-const API_KEY: &str = "cf1879d2cbcc3030df333526";
+use converter::run_interactive;
+use converter::run_with_arguments;
 
 
 fn parse_args() -> ArgMatches {
@@ -34,16 +30,12 @@ fn parse_args() -> ArgMatches {
 fn main() -> Result<()> {
     let match_result = parse_args();
 
-    let is_interactive = match_result.get_flag("interactive");
-
-
-
-    let conn = cache::init()?;
-    let user_currency = "PLN";
-    let target_currency = "GBP";
-    let amount: f64 = 10.00;
-    let api_data = get_exchange_data(user_currency, &conn)?;
-    let final_amount = convert_currency(amount, target_currency.to_string(), api_data)?;
-    println!("{:.2} {} -> {:.2} {}", amount, user_currency, final_amount, target_currency);
+    let results = match match_result.get_flag("interactive") {
+        true => {
+            run_interactive()?
+        }
+        false => {run_with_arguments("PLN".to_string(), "USD".to_string(), 10.00)?}
+    };
+    println!("{:.2} {} -> {:.2} {}", results.amount, results.from_currency, results.converted_amount, results.to_currency);
     Ok(())
 }

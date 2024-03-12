@@ -29,3 +29,14 @@ pub enum ConversionError {
     #[error(r#"Cannot find conversion data for {0} -> {1}"#)]
     CurrencyNotFound(String, String)
 }
+
+#[derive(Error, Debug)] 
+pub enum InputError {
+    #[error(r#"Currency code has to be in all uppercase letters, for example - USD, EUR"#)]
+    InvalidCode(),
+    #[error(r#"Amount must be a positive number"#)]
+    InvalidAmount(),
+    #[error(r#"There was an error when reading input - {0}"#)]
+    ReadLineError(String)
+
+}

@@ -46,8 +46,9 @@ impl FromSql for CacheData {
     }
 }
 
-pub struct Args {
+pub struct Results {
     pub from_currency: String,
+    pub amount: f64,
     pub to_currency: String,
-    pub amount: f64
+    pub converted_amount: f64
 }

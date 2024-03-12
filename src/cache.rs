@@ -31,9 +31,9 @@ pub fn init() -> Result<Connection> {
     return Ok(conn)
 }
 
-pub fn get(code: &str, conn: &Connection) -> Result<Option<ApiResponse>> {
+pub fn get(code: &String, conn: &Connection) -> Result<Option<ApiResponse>> {
     let mut stmt = conn.prepare("SELECT data FROM cache WHERE code = ?1")?;
-    let data: Option<CacheData> = stmt.query_row(&[code], |r| r.get(0)).optional()?;
+    let data: Option<CacheData> = stmt.query_row([code], |r| r.get(0)).optional()?;
     if let Some(data) = data {
         return Ok(Some(data.cached_response))
     } else {
