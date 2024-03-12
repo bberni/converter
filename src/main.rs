@@ -36,6 +36,7 @@ fn main() -> Result<()> {
         }
         false => {run_with_arguments("PLN".to_string(), "USD".to_string(), 10.00)?}
     };
+    
     println!("{:.2} {} -> {:.2} {}", results.amount, results.from_currency, results.converted_amount, results.to_currency);
     Ok(())
 }

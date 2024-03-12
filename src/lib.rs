@@ -71,67 +71,60 @@ fn get_exchange_data(from_currency: &String, conn: &Connection) -> Result<ApiRes
     };
 }
 
-fn convert_currency(amount: f64, target_currency: String, api_data: ApiResponse) -> Result<f64> {
-    let conversion_rate = if let Some(rate) = api_data.conversion_rates.get(&target_currency) {
+fn convert_currency(amount: f64, to_currency: &String, api_data: ApiResponse) -> Result<f64> {
+    let conversion_rate = if let Some(rate) = api_data.conversion_rates.get(to_currency) {
         rate
     } else {
-        return Err(ConversionError::CurrencyNotFound(api_data.base_code, target_currency).into())
+        return Err(ConversionError::CurrencyNotFound(api_data.base_code, to_currency.clone()).into())
     };
     
     return Ok(((amount * conversion_rate) * 100 as f64).floor() / 100 as f64)
 }
 
-
-fn read_code() -> Result<String> {
-    let mut currency_code = String::new();
-    match stdin().read_line(&mut currency_code) {
-        Ok(_) => {
-            if !currency_code.trim().chars().all(|c| c.is_uppercase()) {
-                return Err(InputError::InvalidCode().into())
-            }
-        },
-        Err(e) => {
-            return Err(InputError::ReadLineError(e.to_string()).into())
-        }
-
-    }
-    return Ok(currency_code.trim().to_string())
+fn read_line() -> Result<String> {
+    let mut buffer = String::new();
+    stdin().read_line(&mut buffer)
+        .map_err(|e| InputError::ReadLineError(e.to_string()))?;
+    return Ok(buffer)
 }
 
-fn read_amount() -> Result<f64> {
-    let mut amount_string = String::new();
-    stdin().read_line(&mut amount_string)
-        .map_err(|e| InputError::ReadLineError(e.to_string()))?;
-    let amount: f64 = match amount_string.trim().parse() {
-        Ok(a) => {
-            if a > 0 as f64{
-                a
+fn parse_code(buffer: String) -> Result<String> {
+    if !buffer.trim().chars().all(|c| c.is_uppercase()) {
+        return Err(InputError::InvalidCode().into())
+    }
+    return Ok(buffer.trim().to_string())
+}
+
+fn parse_amount(buffer: String) -> Result<f64> {
+    match buffer.trim().parse::<f64>() {
+        Ok(amount) => {
+            if amount > 0 as f64 {
+                return Ok(amount)
             } else {
                 return Err(InputError::InvalidAmount().into())
             }
         },
         Err(_) => return  Err(InputError::InvalidAmount().into())
-    };
-    return Ok(amount)
+    }
 }
 
 pub fn run_interactive() -> Result<Results> {
     println!("Welcome to the currency converter tool.");
-    print!("Enter code of currency that you want to convert from: ");
+    print!("Enter the code of currency that you want to convert from: ");
     stdout().flush()?;
-    let from_currency = read_code()?;
-    print!("Enter code of currency that you want to convert to: ");
+    let from_currency = parse_code(read_line()?)?;
+    print!("Enter the code of currency that you want to convert to: ");
     stdout().flush()?;
-    let to_currency = read_code()?;
-    print!("Enter amount of money that you want to convert: ");
+    let to_currency = parse_code(read_line()?)?;
+    print!("Enter the amount of money that you want to convert: ");
     stdout().flush()?;
-    let amount = read_amount()?;
+    let amount = parse_amount(read_line()?)?;
     return run_with_arguments(from_currency, to_currency, amount)
 }
 
 pub fn run_with_arguments(from_currency: String, to_currency: String, amount: f64) -> Result<Results> {
     let conn = cache::init()?;
     let api_data = get_exchange_data(&from_currency, &conn)?;
-    let converted_amount = convert_currency(amount, to_currency.to_string(), api_data)?;
+    let converted_amount = convert_currency(amount, &to_currency, api_data)?;
     return Ok(Results {from_currency, amount, to_currency, converted_amount}) 
 }
