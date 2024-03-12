@@ -1,8 +1,8 @@
 mod models;
 mod errors;
-mod cache;
+pub mod cache;
 
-use std::io::{stdin, stdout, Write};
+use std::{collections::HashMap, io::{stdin, stdout, Write}};
 use models::Results;
 use reqwest::{self, blocking::Response, StatusCode};
 use errors::{RequestError, ApiError, ConversionError, InputError};
@@ -48,7 +48,7 @@ fn parse_response(from_currency: &String, r: Response, conn: &Connection) -> Res
     }
 }
 
-fn get_exchange_data(from_currency: &String, conn: &Connection) -> Result<ApiResponse> {
+pub fn get_exchange_data(from_currency: &String, conn: &Connection) -> Result<ApiResponse> {
     match cache::cleanup(conn) {
         Ok(_) => {
             let response = match cache::get(&from_currency, conn) {
@@ -88,14 +88,14 @@ fn read_line() -> Result<String> {
     return Ok(buffer)
 }
 
-fn parse_code(buffer: String) -> Result<String> {
+pub fn parse_code(buffer: &String) -> Result<String> {
     if !buffer.trim().chars().all(|c| c.is_uppercase()) {
         return Err(InputError::InvalidCode().into())
     }
     return Ok(buffer.trim().to_string())
 }
 
-fn parse_amount(buffer: String) -> Result<f64> {
+pub fn parse_amount(buffer: &String) -> Result<f64> {
     match buffer.trim().parse::<f64>() {
         Ok(amount) => {
             if amount > 0 as f64 {
@@ -108,22 +108,21 @@ fn parse_amount(buffer: String) -> Result<f64> {
     }
 }
 
-pub fn run_interactive() -> Result<Results> {
+pub fn run_interactive(conn: &Connection) -> Result<Results> {
     println!("Welcome to the currency converter tool.");
     print!("Enter the code of currency that you want to convert from: ");
     stdout().flush()?;
-    let from_currency = parse_code(read_line()?)?;
+    let from_currency = parse_code(&read_line()?)?;
     print!("Enter the code of currency that you want to convert to: ");
     stdout().flush()?;
-    let to_currency = parse_code(read_line()?)?;
+    let to_currency = parse_code(&read_line()?)?;
     print!("Enter the amount of money that you want to convert: ");
     stdout().flush()?;
-    let amount = parse_amount(read_line()?)?;
-    return run_with_arguments(from_currency, to_currency, amount)
+    let amount = parse_amount(&read_line()?)?;
+    return run_with_arguments(from_currency, to_currency, amount, conn)
 }
 
-pub fn run_with_arguments(from_currency: String, to_currency: String, amount: f64) -> Result<Results> {
-    let conn = cache::init()?;
+pub fn run_with_arguments(from_currency: String, to_currency: String, amount: f64, conn: &Connection) -> Result<Results> {
     let api_data = get_exchange_data(&from_currency, &conn)?;
     let converted_amount = convert_currency(amount, &to_currency, api_data)?;
     return Ok(Results {from_currency, amount, to_currency, converted_amount}) 
