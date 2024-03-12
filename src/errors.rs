@@ -17,7 +17,7 @@ pub enum ApiError {
     #[error(r#"Invalid API key"#)]
     InvalidKey(),
     #[error(r#"Inactive account - email address wasn't confirmed"#)]
-    InactitveAccount(),
+    InactiveAccount(),
     #[error(r#"Quota reached: Your account has reached the maximum number of requests allowed by your plan"#)]
     QuotaReached(),
     #[error(r#"Unknown API error - {0}"#)]
@@ -38,5 +38,10 @@ pub enum InputError {
     InvalidAmount(),
     #[error(r#"There was an error when reading input - {0}"#)]
     ReadLineError(String)
+}
 
+#[derive(Error, Debug)]
+pub enum ApiKeyError {
+    #[error(r#"Cannot find the API key. You can provide it by creating EXCHANGE_API_KEY envrionment variable containing the key."#)]
+    KeyNotFound()
 }

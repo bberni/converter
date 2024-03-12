@@ -1,6 +1,7 @@
+use std::env;
 use anyhow::Result;
 use clap::{command, Arg, ArgAction, ArgMatches};
-use converter::{parse_amount, parse_code, run_interactive, run_with_arguments, get_exchange_data, cache};
+use converter::{parse_amount, parse_code, run_interactive, run_with_arguments, get_exchange_data, cache, errors::ApiKeyError};
 
 fn parse_args() -> ArgMatches {
     command!()
@@ -39,24 +40,31 @@ fn parse_args() -> ArgMatches {
         .get_matches()
 }
 
+fn get_api_key() -> Result<String> {
+    match env::var("EXCHANGE_API_KEY") {
+        Ok(key) => return Ok(key),
+        Err(_) => return Err(ApiKeyError::KeyNotFound().into())
+    }
+}
 fn main() -> Result<()> {
     let conn = cache::init()?;
+    let api_key = get_api_key()?;
     let match_result = parse_args();
 
     if let Some(currency_code) = match_result.get_one::<String>("list") {
-        let data = get_exchange_data(&parse_code(currency_code)?, &conn)?;
+        let data = get_exchange_data(&parse_code(currency_code)?, &conn, &api_key)?;
         println!("Listing conversion rates for {}:", &currency_code);
         data.conversion_rates.into_iter().for_each(|(key, value)| {
             println!("{}: {}", key, value);
         });
     } else {
         let results = match match_result.get_flag("interactive") {
-            true => run_interactive(&conn)?,
+            true => run_interactive(&conn, &api_key)?,
             false => {
                 let from_currency = parse_code(match_result.get_one::<String>("from-currency").unwrap())?;
                 let to_currency = parse_code(match_result.get_one::<String>("to-currency").unwrap())?;
                 let amount = parse_amount(match_result.get_one::<String>("amount").unwrap())?;
-                run_with_arguments(from_currency, to_currency, amount, &conn)?
+                run_with_arguments(from_currency, to_currency, amount, &conn, &api_key)?
             }
         };
         println!(
