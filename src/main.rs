@@ -48,8 +48,8 @@ fn get_api_key() -> Result<String> {
 }
 fn main() -> Result<()> {
     let conn = cache::init()?;
-    let api_key = get_api_key()?;
     let match_result = parse_args();
+    let api_key = get_api_key()?;
 
     if let Some(currency_code) = match_result.get_one::<String>("list") {
         let data = get_exchange_data(&parse_code(currency_code)?, &conn, &api_key)?;
