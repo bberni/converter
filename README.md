@@ -14,15 +14,16 @@ This currency converter is a Rust-based command-line tool that allows users to c
 - A [Rust Installation](https://www.rust-lang.org/learn/get-started) to build this project.
 - An ExchangeRate-API API key, which you can get for free on their [website](https://www.exchangerate-api.com/).
 
-### Installation
+### Building
 1. Clone the repository to your local machine:
    ```bash
-   git clone https://github.com/bberni/converter
+   git clone https://github.com/bberni/
 2. Build your project with cargo:
     ```bash
     cd converter
     cargo build --release
     ```
+    Compiled binary can be found at converter/target/release
 ### Configuration
 Before using the tool, you need to set up the environment variable for the API key:
 
@@ -39,13 +40,13 @@ You can run the converter in interactive mode, where you will be prompted for al
 
 **Basic usage:**
 ```bash
-cargo run -- [from-currency] [to-currency] [amount]
+./converter [from-currency] [to-currency] [amount]
 ```
 **Interactive mode:**
 ```bash 
-cargo run -- --interactive
+./converter --interactive
 ```
 **List conversion rates for given currency:**
 ```bash 
-cargo run -- --list USD
+./cargo run --release -- --list USD
 ```
