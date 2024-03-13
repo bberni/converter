@@ -41,7 +41,7 @@ fn parse_args() -> ArgMatches {
 }
 
 fn get_api_key() -> Result<String> {
-    match env::var("EXCHANGE_API_KEY") {
+    match env::var("EXCHANGERATE_API_KEY") {
         Ok(key) => return Ok(key),
         Err(_) => return Err(ApiKeyError::KeyNotFound().into())
     }
