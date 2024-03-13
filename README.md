@@ -17,7 +17,7 @@ This currency converter is a Rust-based command-line tool that allows users to c
 ### Building
 1. Clone the repository to your local machine:
    ```bash
-   git clone https://github.com/bberni/
+   git clone https://github.com/bberni/converter
 2. Build your project with cargo:
     ```bash
     cd converter
@@ -41,6 +41,10 @@ You can run the converter in interactive mode, where you will be prompted for al
 **Basic usage:**
 ```bash
 ./converter [from-currency] [to-currency] [amount]
+```
+Example:
+```bash
+./converter USD EUR 10
 ```
 **Interactive mode:**
 ```bash 
