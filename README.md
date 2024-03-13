@@ -1,12 +1,12 @@
-# Currency Converter
+# Converter
 
 ## Overview
-This Currency Converter is a Rust-based command-line tool that allows users to convert amounts between different currencies. It utilizes the ExchangeRate-API for fetching real-time conversion rates and supports an interactive mode for ease of use. Additionally, it offers functionality to list all conversion rates for a specified currency.
+This currency Converter is a Rust-based command-line tool that allows users to convert amounts between different currencies. It utilizes the ExchangeRate-API for fetching real-time conversion rates and supports an interactive mode for ease of use. Additionally, it offers functionality to list all conversion rates for a specified currency.
 
 ## Features
-- Convert amounts between two specified currencies.
-- List all conversion rates for a specified currency.
-- Interactive mode for easier user input handling.
+- Converting amounts between two specified currencies.
+- Interactive mode for easier usage.
+- Listing all conversion rates for a specified currency.
 - Caching of API responses to optimize repeated requests.
 
 ## Getting Started
