@@ -42,6 +42,6 @@ pub enum InputError {
 
 #[derive(Error, Debug)]
 pub enum ApiKeyError {
-    #[error(r#"Cannot find the API key. You can provide it by creating EXCHANGE_API_KEY envrionment variable containing the key."#)]
+    #[error(r#"Cannot find the API key. You can provide it by creating EXCHANGERATE_API_KEY envrionment variable containing the key."#)]
     KeyNotFound()
 }
