@@ -76,9 +76,7 @@ fn convert_currency(amount: f64, to_currency: &str, api_data: ApiResponse) -> Re
     } else {
         return Err(ConversionError::CurrencyNotFound(api_data.base_code, to_currency.to_string()).into())
     };
-    // although the data from the API is very precise, i've decided to also round all results down
-    // - in my opinion it is better for the user to recieve slightly understated amount, than to risk overstating
-    return Ok(((amount * conversion_rate) * 100 as f64).floor() / 100 as f64)
+    return Ok(((amount * conversion_rate) * 100 as f64).round() / 100 as f64)
 }
 
 fn read_line() -> Result<String> {
