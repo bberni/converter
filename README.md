@@ -39,7 +39,7 @@ You can run the converter in interactive mode, where you will be prompted for al
 
 **Basic usage:**
 ```bash
-cargo run -- --from-currency USD --to-currency EUR --amount 100.00
+cargo run -- USD EUR 100.00
 ```
 **Interactive mode:**
 ```bash 
