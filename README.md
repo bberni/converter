@@ -35,7 +35,7 @@ Linux:
 export EXCHANGERATE_API_KEY="<your API key>"
 ```
 ### Usage
-You can run the converter in interactive mode, where you will be prompted for all information needed for the conversion, or you can provide arguments directly.
+You can run the converter in interactive mode, where you will be prompted for all information needed for the conversion, or you can provide arguments directly. Alternatively, you can list all conversion rates for specified currency.
 
 **Basic usage:**
 ```bash
