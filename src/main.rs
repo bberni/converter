@@ -61,6 +61,9 @@ fn main() -> Result<()> {
         let results = match match_result.get_flag("interactive") {
             true => run_interactive(&conn, &api_key)?,
             false => {
+                // i've decided to use unwrap here to make code shorter and clearer
+                // the program shouldn't ever panic anyway, because clap will not allow for it to run this far
+                // if arguments are not provided
                 let from_currency = parse_code(match_result.get_one::<String>("from-currency").unwrap())?;
                 let to_currency = parse_code(match_result.get_one::<String>("to-currency").unwrap())?;
                 let amount = parse_amount(match_result.get_one::<String>("amount").unwrap())?;

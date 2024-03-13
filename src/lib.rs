@@ -47,6 +47,7 @@ fn parse_response(from_currency: &str, r: Response, conn: &Connection) -> Result
 }
 
 pub fn get_exchange_data(from_currency: &str, conn: &Connection, api_key: &str) -> Result<ApiResponse> {
+    // if for some reason we can't clean up old from the cache, we cannot rely on it for accurate data
     match cache::cleanup(conn) {
         Ok(_) => {
             let response = match cache::get(from_currency, conn) {
@@ -75,7 +76,8 @@ fn convert_currency(amount: f64, to_currency: &str, api_data: ApiResponse) -> Re
     } else {
         return Err(ConversionError::CurrencyNotFound(api_data.base_code, to_currency.to_string()).into())
     };
-    
+    // although the data from the API is very precise, i've decided to also round all results down
+    // - in my opinion it is better for the user to recieve slightly understated amount, than to risk overstating
     return Ok(((amount * conversion_rate) * 100 as f64).floor() / 100 as f64)
 }
 
