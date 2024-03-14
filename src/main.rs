@@ -1,7 +1,15 @@
-use std::env;
+mod cache;
+mod errors;
+mod models;
+mod run;
+mod utils;
+
 use anyhow::Result;
 use clap::{command, Arg, ArgAction, ArgMatches};
-use converter::{parse_amount, parse_code, run_interactive, run_with_arguments, get_exchange_data, cache, errors::ApiKeyError};
+use errors::ApiKeyError;
+use run::{run_interactive, run_with_arguments};
+use std::env;
+use utils::{get_exchange_data, parse_amount, parse_code};
 
 fn parse_args() -> ArgMatches {
     command!()
@@ -25,17 +33,17 @@ fn parse_args() -> ArgMatches {
         .arg(
             Arg::new("from-currency")
                 .required_unless_present_any(["interactive", "list"])
-                .help("Code of currency that you want to convert money from")
+                .help("Code of currency that you want to convert money from"),
         )
         .arg(
             Arg::new("to-currency")
                 .required_unless_present_any(["interactive", "list"])
-                .help("Code of currency that you want to convert money to")                
+                .help("Code of currency that you want to convert money to"),
         )
         .arg(
             Arg::new("amount")
                 .required_unless_present_any(["interactive", "list"])
-                .help("Amount of money to be converted")
+                .help("Amount of money to be converted"),
         )
         .get_matches()
 }
@@ -43,7 +51,7 @@ fn parse_args() -> ArgMatches {
 fn get_api_key() -> Result<String> {
     match env::var("EXCHANGERATE_API_KEY") {
         Ok(key) => return Ok(key),
-        Err(_) => return Err(ApiKeyError::KeyNotFound().into())
+        Err(_) => return Err(ApiKeyError::KeyNotFound().into()),
     }
 }
 fn main() -> Result<()> {
@@ -64,8 +72,10 @@ fn main() -> Result<()> {
                 // i've decided to use unwrap here to make code shorter and clearer
                 // the program shouldn't ever panic anyway, because clap will not allow for it to run this far
                 // if arguments are not provided
-                let from_currency = parse_code(match_result.get_one::<String>("from-currency").unwrap())?;
-                let to_currency = parse_code(match_result.get_one::<String>("to-currency").unwrap())?;
+                let from_currency =
+                    parse_code(match_result.get_one::<String>("from-currency").unwrap())?;
+                let to_currency =
+                    parse_code(match_result.get_one::<String>("to-currency").unwrap())?;
                 let amount = parse_amount(match_result.get_one::<String>("amount").unwrap())?;
                 run_with_arguments(from_currency, to_currency, amount, &conn, &api_key)?
             }

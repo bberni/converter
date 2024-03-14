@@ -1,7 +1,7 @@
 # Converter
 
 ## Overview
-This currency converter is a Rust-based command-line tool that allows users to convert amounts between different currencies. It utilizes the ExchangeRate-API for fetching real-time conversion rates and supports an interactive mode for ease of use. Additionally, it offers functionality to list all conversion rates for a specified currency.
+This currency converter is a Rust-based command-line tool that allows users to convert amounts between different currencies. It utilizes the ExchangeRate-API for fetching accurate conversion rates and supports an interactive mode for ease of use. Additionally, it offers functionality to list all conversion rates for a specified currency.
 
 ## Features
 - Converting amounts between two specified currencies.
@@ -31,7 +31,7 @@ Windows (PowerShell):
 ```powershell
 $Env:EXCHANGERATE_API_KEY = "<your API key>"
 ```
-Linux: 
+Bash: 
 ```bash
 export EXCHANGERATE_API_KEY="<your API key>"
 ```
@@ -52,5 +52,5 @@ Example:
 ```
 **List conversion rates for given currency:**
 ```bash 
-./cargo run --release -- --list USD
+./converter --list USD
 ```
