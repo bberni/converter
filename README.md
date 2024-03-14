@@ -52,5 +52,5 @@ Example:
 ```
 **List conversion rates for given currency:**
 ```bash 
-./converter --list USD
+./converter --list <currency-code>
 ```
