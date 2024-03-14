@@ -1,6 +1,6 @@
 use rusqlite::types::{FromSql, FromSqlResult, FromSqlError, ValueRef};
 use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 use serde_json;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -52,3 +52,10 @@ pub struct Results {
     pub to_currency: String,
     pub converted_amount: f64
 }
+
+impl Display for Results {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:.2} {} -> {:.2} {}",
+        &self.amount, &self.from_currency, &self.converted_amount, &self.to_currency)
+    }
+} 

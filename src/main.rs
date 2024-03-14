@@ -70,10 +70,7 @@ fn main() -> Result<()> {
                 run_with_arguments(from_currency, to_currency, amount, &conn, &api_key)?
             }
         };
-        println!(
-            "{:.2} {} -> {:.2} {}",
-            results.amount, results.from_currency, results.converted_amount, results.to_currency
-        );
+        println!("{}", results);
     }
     Ok(())
 }
