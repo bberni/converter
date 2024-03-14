@@ -1,6 +1,6 @@
 use rusqlite::types::{FromSql, FromSqlResult, FromSqlError, ValueRef};
 use serde::{Serialize, Deserialize};
-use std::{collections::HashMap, fmt::Display};
+use std::{collections::BTreeMap, fmt::Display};
 use serde_json;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -13,7 +13,7 @@ pub struct ApiResponse {
     pub time_next_update_unix: u64,
     time_next_update_utc: String,
     pub base_code: String,
-    pub conversion_rates: HashMap<String, f64>,
+    pub conversion_rates: BTreeMap<String, f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
