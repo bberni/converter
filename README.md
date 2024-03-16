@@ -54,3 +54,35 @@ Example:
 ```bash 
 ./converter --list <currency-code>
 ```
+## Using Docker
+Instead of compiling the tool manually, you can build a docker image from supplied Dockerfile, or you can download the prebuilt image from [Docker Hub](https://hub.docker.com/r/bberni/converter)
+
+### Using Dockerfile
+To build an image you need to follow these steps:
+```bash 
+git clone https://github.com/bberni/converter
+cd converter
+docker build -t converter .
+```
+You can also also put your API key in the EXCHANGERATE_API_KEY variable in Dockerfile, you won't need to input it later.
+
+### Using a prebuilt image
+You can download the image with a simple command.
+```bash
+docker pull bberni/converter
+```
+### Running a docker image
+After installing a prebuilt image or building your own, you can start up the tool with just one command:
+```bash
+docker run converter (or bberni/converter if you are using image from Docker Hub) <arguments>
+```
+Note that it will not let you cache API responses - to do that, you first need to set up a docker volume:
+```bash
+docker volume create converter-cache
+```
+And use it:
+```bash 
+sudo docker run --mount type=volume,src=converter-cache,target=/converter/.cache converter <arguments>
+```
+
+

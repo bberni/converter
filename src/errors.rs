@@ -42,6 +42,6 @@ pub enum InputError {
 
 #[derive(Error, Debug)]
 pub enum ApiKeyError {
-    #[error(r#"Cannot find the API key. You can provide it by creating EXCHANGERATE_API_KEY envrionment variable containing the key. Alternatively, especially if you are using prebilt Docker image, you can supply an arg-key argument."#)]
+    #[error(r#"Cannot find the API key. You can provide it by creating EXCHANGERATE_API_KEY envrionment variable containing the key. Alternatively, you can supply an arg-key argument."#)]
     KeyNotFound()
 }
