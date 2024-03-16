@@ -1,4 +1,4 @@
-FROM rust:1.76.0
+FROM rust:1.76.0 as builder
 
 WORKDIR /converter
 
@@ -8,11 +8,12 @@ COPY ./src ./src
 
 RUN cargo build --release
 
-FROM alpine:3.19.1
+FROM debian:12.5-slim
 
-COPY --from=builder /converter/target/release/converter .
+RUN apt-get update && apt-get install libssl-dev ca-certificates -y
+
+COPY --from=builder  /converter/target/release/converter .
 
 ENV EXCHANGERATE_API_KEY=""
 
-CMD [ "./converter" ]
-
+ENTRYPOINT [ "./converter" ]

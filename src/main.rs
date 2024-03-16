@@ -61,7 +61,13 @@ fn get_api_key(matches: &ArgMatches) -> Result<String> {
         return Ok(key.to_string());
     } else {
         match env::var("EXCHANGERATE_API_KEY") {
-            Ok(key) => return Ok(key),
+            Ok(key) => {
+                if key.len() > 0 {
+                    return Ok(key)
+                } else {
+                    return Err(ApiKeyError::KeyNotFound().into())
+                }
+            }
             Err(_) => return Err(ApiKeyError::KeyNotFound().into()),
         }
     }   
