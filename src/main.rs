@@ -45,19 +45,31 @@ fn parse_args() -> ArgMatches {
                 .required_unless_present_any(["interactive", "list"])
                 .help("Amount of money to be converted"),
         )
+        .arg(
+            Arg::new("api-key")
+                .short('k')
+                .long("api-key")
+                .num_args(1)
+                .help("ExchangeRate-API API key")
+        )
         .get_matches()
 }
 
-fn get_api_key() -> Result<String> {
-    match env::var("EXCHANGERATE_API_KEY") {
-        Ok(key) => return Ok(key),
-        Err(_) => return Err(ApiKeyError::KeyNotFound().into()),
-    }
+fn get_api_key(matches: &ArgMatches) -> Result<String> {
+
+    if let Some(key) = matches.get_one::<String>("api-key") {
+        return Ok(key.to_string());
+    } else {
+        match env::var("EXCHANGERATE_API_KEY") {
+            Ok(key) => return Ok(key),
+            Err(_) => return Err(ApiKeyError::KeyNotFound().into()),
+        }
+    }   
 }
 fn main() -> Result<()> {
     let conn = cache::init()?;
     let match_result = parse_args();
-    let api_key = get_api_key()?;
+    let api_key = get_api_key(&match_result)?;
 
     if let Some(currency_code) = match_result.get_one::<String>("list") {
         let data = get_exchange_data(&parse_code(currency_code)?, &conn, &api_key)?;
