@@ -15,5 +15,5 @@ RUN apt-get update && apt-get install libssl-dev ca-certificates -y
 COPY --from=builder  /converter/target/release/converter .
 
 ENV EXCHANGERATE_API_KEY=""
-
+RUN mkdir .cache
 ENTRYPOINT [ "./converter" ]

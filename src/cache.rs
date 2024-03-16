@@ -1,4 +1,4 @@
-use std::{fs::File, path::Path};
+use std::{fs::{create_dir_all, File}, path::Path};
 use rusqlite::{params, Connection, OptionalExtension};
 use anyhow::Result;
 
@@ -15,6 +15,7 @@ pub fn cleanup(conn: &Connection) -> Result<usize> {
 
 pub fn init() -> Result<Connection> {
     if !Path::new("./.cache/cache.db").exists() {
+        create_dir_all("./.cache")?;
         File::create("./.cache/cache.db")?;
     }
     let conn = Connection::open("./.cache/cache.db")?;
