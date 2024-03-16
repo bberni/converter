@@ -58,7 +58,7 @@ pub fn get_exchange_data(
                 Ok(None) => get_response(from_currency, api_key)?,
                 Err(e) => {
                     println!(
-                        "[!] Error getting data from cache: {}, continuing with data from API",
+                        "[!] Error getting data from cache: {}, continuing with data from API.",
                         e
                     );
                     get_response(from_currency, api_key)?
@@ -68,7 +68,7 @@ pub fn get_exchange_data(
         }
         Err(e) => {
             println!(
-                "[!] Cannot clear out old data from cache: {}, continuing with data from API",
+                "[!] Cannot clear out old data from cache: {}, continuing with data from API.",
                 e
             );
             return parse_response(&from_currency, get_response(&from_currency, api_key)?, conn);
