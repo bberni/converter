@@ -14,10 +14,10 @@ pub fn cleanup(conn: &Connection) -> Result<usize> {
 }
 
 pub fn init() -> Result<Connection> {
-    if !Path::new("./cache.db").exists() {
-        File::create("./cache.db")?;
+    if !Path::new("./.cache/cache.db").exists() {
+        File::create("./.cache/cache.db")?;
     }
-    let conn = Connection::open("cache.db")?;
+    let conn = Connection::open("./.cache/cache.db")?;
     conn.execute("
         CREATE TABLE IF NOT EXISTS cache (
             code TEXT,
